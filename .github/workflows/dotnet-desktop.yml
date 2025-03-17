@@ -21,3 +21,48 @@ jobs:
 
       - name: Build
         run: dotnet build --configuration Release --no-restore
+  build-and-deploy:
+    runs-on: self-hosted  # Use the self-hosted runner on your local PC
+    defaults:
+      run:
+        shell: cmd  # Use CMD shell for Windows commands
+
+    steps:
+      # Checkout the repository code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up .NET Core SDK
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'  # Adjust to your .NET version (e.g., 6.0.x, 7.0.x)
+
+      # Restore dependencies
+      - name: Restore dependencies
+        run: dotnet restore
+
+      # Build the project
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      # Publish the project
+      - name: Publish
+        run: dotnet publish --configuration Release --output C:\Temp\PublishOutput
+
+      # Stop the IIS website
+      - name: Stop IIS Website
+        run: appcmd stop site "TestApp"  # Replace "MyApp" with your IIS site name
+
+      # Deploy the published files to IIS folder
+      - name: Deploy to IIS
+        run: xcopy C:\Temp\PublishOutput\* C:\inetpub\wwwroot\MyApp /E /H /C /I /Y
+        # Replace "C:\inetpub\wwwroot\MyApp" with your IIS site's physical path
+
+      # Start the IIS website
+      - name: Start IIS Website
+        run: appcmd start site "TestApp"  # Replace "MyApp" with your IIS site name
+
+      # Optional: Clean up temporary publish folder
+      - name: Clean up
+        run: rmdir /S /Q C:\Temp\PublishOutput      
