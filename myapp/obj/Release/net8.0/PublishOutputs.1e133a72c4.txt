@@ -1,0 +1,7 @@
+C:\Users\Piistech\OneDrive\Desktop\testApp\myapp\myapp\obj\Release\net8.0\PubTmp\Out\myapp.exe
+C:\Users\Piistech\OneDrive\Desktop\testApp\myapp\myapp\obj\Release\net8.0\PubTmp\Out\appsettings.Development.json
+C:\Users\Piistech\OneDrive\Desktop\testApp\myapp\myapp\obj\Release\net8.0\PubTmp\Out\appsettings.json
+C:\Users\Piistech\OneDrive\Desktop\testApp\myapp\myapp\obj\Release\net8.0\PubTmp\Out\myapp.dll
+C:\Users\Piistech\OneDrive\Desktop\testApp\myapp\myapp\obj\Release\net8.0\PubTmp\Out\myapp.deps.json
+C:\Users\Piistech\OneDrive\Desktop\testApp\myapp\myapp\obj\Release\net8.0\PubTmp\Out\myapp.runtimeconfig.json
+C:\Users\Piistech\OneDrive\Desktop\testApp\myapp\myapp\obj\Release\net8.0\PubTmp\Out\myapp.pdb
