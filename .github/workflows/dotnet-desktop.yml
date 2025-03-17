@@ -15,13 +15,13 @@ jobs:
     steps:
       # Checkout the repository code
       - name: Checkout code
-        uses: actions/checkout@v4  # Updated to v4 for consistency
+        uses: actions/checkout@v4
 
       # Set up .NET Core SDK
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v4  # Updated to v4
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'  # Adjust to your .NET version if needed
+          dotnet-version: '8.0.x'
 
       # Restore dependencies
       - name: Restore dependencies
@@ -35,19 +35,25 @@ jobs:
       - name: Publish
         run: dotnet publish --configuration Release --output C:\Temp\PublishOutput
 
-      # Stop the IIS website
-      - name: Stop IIS Website
-        run: C:\Windows\System32\inetsrv\appcmd.exe stop site "TestApp"  # Full path to appcmd
+      # Stop the IIS website and app pool to release file locks
+      - name: Stop IIS Website and App Pool
+        run: |
+          C:\Windows\System32\inetsrv\appcmd.exe stop site "TestApp"
+          C:\Windows\System32\inetsrv\appcmd.exe stop apppool /apppool.name:"TestApp" || exit 0
+        # Replace "TestAppPool" with your actual app pool name; || exit 0 ignores errors if it’s already stopped
 
       # Deploy the published files to IIS folder
       - name: Deploy to IIS
-        run: xcopy C:\Temp\PublishOutput\* C:\inetpub\wwwroot\myapp/E /H /C /I /Y
-        # Updated to "TestApp" to match the IIS site name
+        run: xcopy C:\Temp\PublishOutput\* C:\inetpub\wwwroot\myapp /E /H /C /I /Y /D
+        # Fixed path (removed "/E" after "myapp") and added /D for incremental updates
 
-      # Start the IIS website
-      - name: Start IIS Website
-        run: C:\Windows\System32\inetsrv\appcmd.exe start site "TestApp"  # Full path to appcmd
+      # Start the IIS website and app pool
+      - name: Start IIS Website and App Pool
+        run: |
+          C:\Windows\System32\inetsrv\appcmd.exe start site "TestApp"
+          C:\Windows\System32\inetsrv\appcmd.exe start apppool /apppool.name:"TestApp" || exit 0
+        # Replace "TestAppPool" with your actual app pool name
 
-      # Optional: Clean up temporary publish folder
+      # Clean up temporary publish folder
       - name: Clean up
         run: rmdir /S /Q C:\Temp\PublishOutput
