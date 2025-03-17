@@ -1,28 +1,13 @@
 name: my_app_test
+
 on:
   push:
     branches:
       - "main"
 
 jobs:
-  build_job:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.0.x'
-
-      - name: Restore dependencies
-        run: dotnet restore
-
-      - name: Build
-        run: dotnet build --configuration Release --no-restore
   build-and-deploy:
-    runs-on: self-hosted  # Use the self-hosted runner on your local PC
+    runs-on: self-hosted  # Use the self-hosted runner on your local Windows PC
     defaults:
       run:
         shell: cmd  # Use CMD shell for Windows commands
@@ -30,13 +15,13 @@ jobs:
     steps:
       # Checkout the repository code
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4  # Updated to v4 for consistency
 
       # Set up .NET Core SDK
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4  # Updated to v4
         with:
-          dotnet-version: '8.0.x'  # Adjust to your .NET version (e.g., 6.0.x, 7.0.x)
+          dotnet-version: '8.0.x'  # Adjust to your .NET version if needed
 
       # Restore dependencies
       - name: Restore dependencies
@@ -52,17 +37,17 @@ jobs:
 
       # Stop the IIS website
       - name: Stop IIS Website
-        run: appcmd stop site "TestApp"  # Replace "MyApp" with your IIS site name
+        run: C:\Windows\System32\inetsrv\appcmd.exe stop site "TestApp"  # Full path to appcmd
 
       # Deploy the published files to IIS folder
       - name: Deploy to IIS
-        run: xcopy C:\Temp\PublishOutput\* C:\inetpub\wwwroot\MyApp /E /H /C /I /Y
-        # Replace "C:\inetpub\wwwroot\MyApp" with your IIS site's physical path
+        run: xcopy C:\Temp\PublishOutput\* C:\inetpub\wwwroot\TestApp /E /H /C /I /Y
+        # Updated to "TestApp" to match the IIS site name
 
       # Start the IIS website
       - name: Start IIS Website
-        run: appcmd start site "TestApp"  # Replace "MyApp" with your IIS site name
+        run: C:\Windows\System32\inetsrv\appcmd.exe start site "TestApp"  # Full path to appcmd
 
       # Optional: Clean up temporary publish folder
       - name: Clean up
-        run: rmdir /S /Q C:\Temp\PublishOutput      
+        run: rmdir /S /Q C:\Temp\PublishOutput
