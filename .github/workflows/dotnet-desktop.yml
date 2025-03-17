@@ -41,7 +41,7 @@ jobs:
 
       # Deploy the published files to IIS folder
       - name: Deploy to IIS
-        run: xcopy C:\Temp\PublishOutput\* C:\inetpub\wwwroot\TestApp /E /H /C /I /Y
+        run: xcopy C:\Temp\PublishOutput\* C:\inetpub\wwwroot\myapp/E /H /C /I /Y
         # Updated to "TestApp" to match the IIS site name
 
       # Start the IIS website
