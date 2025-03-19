@@ -1,0 +1,42 @@
+name: Deploy PPOS.Web.Admin to IIS
+
+on:
+  push:
+    branches:
+      - main  # Change to your default branch if needed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Install .NET SDK
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0'  # Adjust according to your .NET version
+
+    - name: Publish PPOS.Web.Admin
+      run: |
+        cd PPOS.Web.Admin
+        dotnet publish -c Release -o ../publish
+
+    - name: Deploy via SSH
+      uses: appleboy/scp-action@v0.1.4
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_KEY }}
+        source: "publish/*"
+        target: "C:/inetpub/wwwroot/PPOS.Web.Admin"
+
+    - name: Restart IIS
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          iisreset
